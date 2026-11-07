@@ -122,15 +122,15 @@ function start(){if(ended)reset();document.body.classList.add('game-started');do
 document.querySelector('#start').onclick=()=>start();document.querySelector('#reset').onclick=()=>{round++;reset()};document.querySelector('#again').onclick=()=>{round++;reset();start()};document.querySelector('#pause').onclick=()=>{if(ended)return;running=!running;status.textContent=running?'FIGHT IN PROGRESS':'MATCH PAUSED';document.querySelector('#pause').textContent=running?'Ⅱ PAUSE':'▶ RESUME'};
 const clock=new THREE.Clock();
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);elapsed+=dt;
- if(running){attackCooldown=Math.max(0,attackCooldown-dt);fighters.forEach((f)=>{if(!f.alive)return;f.cooldown-=dt;
+ if(running){attackCooldown=Math.max(0,attackCooldown-dt);fighters.forEach((f)=>{if(!f.alive)return;f.cooldown-=dt;f.abilityCooldown-=dt;f.speedBoost=Math.max(0,f.speedBoost-dt);f.shieldTime=Math.max(0,f.shieldTime-dt);
  if(f===player){
   const mx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),mz=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0),len=Math.hypot(mx,mz)||1;
-  if(mx||mz){f.root.position.x+=mx/len*dt*4.1;f.root.position.z+=mz/len*dt*4.1;f.root.rotation.y=Math.atan2(mx,mz)}
+  if(mx||mz){f.root.position.x+=mx/len*dt*(f.speedBoost>0?6:4.1);f.root.position.z+=mz/len*dt*(f.speedBoost>0?6:4.1);f.root.rotation.y=Math.atan2(mx,mz)}
   f.root.position.x=Math.max(-7.7,Math.min(7.7,f.root.position.x));f.root.position.z=Math.max(-7.7,Math.min(7.7,f.root.position.z));
   f.root.position.y=Math.abs(Math.sin(elapsed*7+f.phase))*.035;f.aura.rotation.z+=dt*.8;
   if(f.hitFlash>0){f.hitFlash-=dt;f.body.material.emissiveIntensity=.8}else f.body.material.emissiveIntensity=.12;
   return;
- }f.abilityCooldown-=dt;f.speedBoost=Math.max(0,f.speedBoost-dt);f.shieldTime=Math.max(0,f.shieldTime-dt);const others=fighters.filter(o=>o!==f&&o.alive);if(!others.length)return;
+ }const others=fighters.filter(o=>o!==f&&o.alive);if(!others.length)return;
  if(f.abilityCooldown<=0){if(f.slug==='zeebers'){f.speedBoost=2.4;f.abilityCooldown=9;log('<b style="color:'+f.hex+'">Zeebers</b> activates QUICKSTEP!')}else if(f.slug==='calculated'){f.shieldTime=3;f.abilityCooldown=10;log('<b style="color:'+f.hex+'">Calculated</b> activates OVERDRIVE SHIELD!')}else{f.abilityCooldown=11;log('<b style="color:'+f.hex+'">icob</b> unleashes ENERGY NOVA!');others.forEach(enemy=>{if(f.root.position.distanceTo(enemy.root.position)<5)damage(enemy,12,f)})}}
  let target=others.reduce((a,b)=>f.root.position.distanceTo(a.root.position)<f.root.position.distanceTo(b.root.position)?a:b);
  const dx=target.root.position.x-f.root.position.x,dz=target.root.position.z-f.root.position.z,dist=Math.hypot(dx,dz)||1;
