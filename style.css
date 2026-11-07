@@ -97,3 +97,67 @@
   body.game-started #touchControls .action-pad { width: 96px; }
   body.game-started #touchControls .action-pad button { min-height: 52px; }
 }
+
+
+/* Player elimination screen */
+#deathScreen {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  place-items: center;
+  padding: 22px;
+  background: radial-gradient(ellipse at center, rgba(74, 12, 22, .76), rgba(3, 5, 10, .96));
+  backdrop-filter: blur(12px);
+  color: #f7f8fc;
+  text-align: center;
+}
+#deathScreen.show { display: grid; }
+#deathScreen .death-card {
+  width: min(440px, 100%);
+  padding: 34px 26px;
+  border: 1px solid rgba(255, 105, 120, .38);
+  border-radius: 22px;
+  background: linear-gradient(160deg, rgba(30, 18, 29, .98), rgba(10, 14, 25, .98));
+  box-shadow: 0 24px 90px rgba(0,0,0,.6), 0 0 55px rgba(255,55,75,.12);
+}
+#deathScreen .death-kicker {
+  color: #ff7887;
+  font: 800 11px Inter, system-ui, sans-serif;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+#deathScreen h1 {
+  margin: 12px 0 8px;
+  color: #fff;
+  font: 1000 clamp(42px, 10vw, 66px)/.95 Inter, system-ui, sans-serif;
+  letter-spacing: -2px;
+}
+#deathScreen p {
+  margin: 0 auto 24px;
+  max-width: 310px;
+  color: #b9c0cf;
+  font: 500 14px/1.6 Inter, system-ui, sans-serif;
+}
+#deathScreen .death-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+#deathScreen button {
+  min-height: 46px;
+  padding: 0 20px;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: 12px;
+  background: #29364d;
+  color: white;
+  font: 800 11px Inter, system-ui, sans-serif;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+#deathScreen #deathRetry {
+  border-color: #ff6678;
+  background: #e94359;
+}
+#deathScreen button:active { transform: scale(.97); }
