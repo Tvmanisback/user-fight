@@ -70,9 +70,9 @@ import * as THREE from 'three';
 const mount=document.querySelector('#scene');
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x080b12);scene.fog=new THREE.FogExp2(0x080b12,.025);
 const camera=new THREE.PerspectiveCamera(48,innerWidth/innerHeight,.1,100);camera.position.set(0,10,17);camera.lookAt(0,1,0);
-const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;mount.appendChild(renderer.domElement);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;mount.appendChild(renderer.domElement);
 scene.add(new THREE.HemisphereLight(0xa9c9ff,0x17101f,2));
-const key=new THREE.DirectionalLight(0xffffff,3.2);key.position.set(-5,12,7);key.castShadow=true;key.shadow.mapSize.set(2048,2048);scene.add(key);
+const key=new THREE.DirectionalLight(0xffffff,3.2);key.position.set(-5,12,7);key.castShadow=true;key.shadow.mapSize.set(1024,1024);scene.add(key);
 const rim=new THREE.PointLight(0x5c79ff,35,25);rim.position.set(7,5,-5);scene.add(rim);
 const floor=new THREE.Mesh(new THREE.CylinderGeometry(9,9,.5,64),new THREE.MeshStandardMaterial({color:0x151c2a,metalness:.55,roughness:.55}));floor.position.y=-.28;floor.receiveShadow=true;scene.add(floor);
 const ring=new THREE.Mesh(new THREE.TorusGeometry(8.65,.07,10,100),new THREE.MeshBasicMaterial({color:0x8294b7}));ring.rotation.x=Math.PI/2;ring.position.y=.02;scene.add(ring);
@@ -105,7 +105,7 @@ function makeFighter(f,i){
  for(const s of [-1,1]){const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.48,4,8),dark);leg.position.set(s*.2,.43,0);leg.castShadow=true;root.add(leg)}
  const aura=new THREE.Mesh(new THREE.TorusGeometry(.62,.035,8,32),new THREE.MeshBasicMaterial({color:f.color,transparent:true,opacity:.85}));aura.rotation.x=Math.PI/2;aura.position.y=.08;root.add(aura);
  const glow=new THREE.PointLight(f.color,2.3,4);glow.position.y=1.2;root.add(glow);
- f.root=root;f.body=body;f.arms=arms;f.aura=aura;f.glow=glow;f.alive=true;f.hp=100;f.cooldown=Math.random();f.hitFlash=0;f.phase=Math.random()*6;f.abilityCooldown=3+i*1.7;f.speedBoost=0;f.shieldTime=0;
+ f.root=root;f.isPlayer=(i===selectedFighter);f.body=body;f.arms=arms;f.aura=aura;f.glow=glow;f.alive=true;f.hp=100;f.cooldown=Math.random();f.hitFlash=0;f.phase=Math.random()*6;f.abilityCooldown=3+i*1.7;f.speedBoost=0;f.shieldTime=0;
  const start=[[-4,0],[4,0],[0,-4.4]][i];root.position.set(start[0],0,start[1]);return f;
 }
 fighters.forEach(makeFighter);
@@ -123,7 +123,7 @@ document.querySelector('#start').onclick=()=>start();document.querySelector('#re
 const clock=new THREE.Clock();
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);elapsed+=dt;
  if(running){attackCooldown=Math.max(0,attackCooldown-dt);fighters.forEach((f)=>{if(!f.alive)return;f.cooldown-=dt;f.abilityCooldown-=dt;f.speedBoost=Math.max(0,f.speedBoost-dt);f.shieldTime=Math.max(0,f.shieldTime-dt);
- if(f===player){
+ if(f.isPlayer){
   const mx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),mz=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0),len=Math.hypot(mx,mz)||1;
   if(mx||mz){f.root.position.x+=mx/len*dt*(f.speedBoost>0?6:4.1);f.root.position.z+=mz/len*dt*(f.speedBoost>0?6:4.1);f.root.rotation.y=Math.atan2(mx,mz)}
   f.root.position.x=Math.max(-7.7,Math.min(7.7,f.root.position.x));f.root.position.z=Math.max(-7.7,Math.min(7.7,f.root.position.z));
@@ -150,10 +150,11 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
 updateHud();log('You are playing as '+player.name+'.');
 function attack(){if(!running||!player.alive||attackCooldown>0)return;const foes=fighters.filter(f=>f!==player&&f.alive).sort((a,b)=>player.root.position.distanceTo(a.root.position)-player.root.position.distanceTo(b.root.position));const target=foes[0];if(!target)return;const d=player.root.position.distanceTo(target.root.position);if(d>2.35){log('Move closer to attack!');return;}attackCooldown=.48;player.arms.forEach(a=>a.rotation.x=-.9);damage(target,14,player);log('<b style="color:'+player.hex+'">'+player.name+'</b> hits '+target.name+'!');}
 function special(){if(!running||!player.alive||player.abilityCooldown>0)return;if(player.slug==='zeebers'){player.speedBoost=2.4;player.abilityCooldown=9;log('QUICKSTEP activated!')}else if(player.slug==='calculated'){player.shieldTime=3;player.abilityCooldown=10;log('OVERDRIVE SHIELD activated!')}else{player.abilityCooldown=11;log('ENERGY NOVA unleashed!');fighters.filter(f=>f!==player&&f.alive&&player.root.position.distanceTo(f.root.position)<5).forEach(f=>damage(f,18,player));}}
-addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();keys[k]=true;if(k===' '&&!e.repeat)attack();if(k==='e'&&!e.repeat)special();});
-addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
-addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));
-document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;b.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true;b.setPointerCapture(e.pointerId)});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>keys[k]=false));});
+function setMoveKey(key,pressed){keys[key]=pressed;}
+function handleGameKeyDown(e){const k=e.key.toLowerCase();const code=e.code;const movement={KeyW:'w',KeyA:'a',KeyS:'s',KeyD:'d',ArrowUp:'arrowup',ArrowDown:'arrowdown',ArrowLeft:'arrowleft',ArrowRight:'arrowright'};if(movement[code]){e.preventDefault();setMoveKey(movement[code],true);return;}if(code==='Space'){e.preventDefault();if(!e.repeat)attack();return;}if(k==='e'&&!e.repeat){e.preventDefault();special();}}
+function handleGameKeyUp(e){const movement={KeyW:'w',KeyA:'a',KeyS:'s',KeyD:'d',ArrowUp:'arrowup',ArrowDown:'arrowdown',ArrowLeft:'arrowleft',ArrowRight:'arrowright'};const k=movement[e.code]||e.key.toLowerCase();setMoveKey(k,false);}
+window.addEventListener('keydown',handleGameKeyDown,{passive:false});window.addEventListener('keyup',handleGameKeyUp);window.addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));document.addEventListener('visibilitychange',()=>{if(document.hidden)Object.keys(keys).forEach(k=>keys[k]=false);});
+document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;const down=e=>{e.preventDefault();keys[k]=true;if(b.setPointerCapture&&e.pointerId!==undefined){try{b.setPointerCapture(e.pointerId)}catch(_){}}};const up=e=>{if(e)e.preventDefault();keys[k]=false;};b.addEventListener('pointerdown',down,{passive:false});['pointerup','pointercancel','lostpointercapture','pointerleave'].forEach(ev=>b.addEventListener(ev,up));b.addEventListener('contextmenu',e=>e.preventDefault());});
 document.querySelector('#touchAttack').addEventListener('pointerdown',e=>{e.preventDefault();attack()});document.querySelector('#touchSpecial').addEventListener('pointerdown',e=>{e.preventDefault();special()});
 document.querySelector('#tutorialStart').onclick=()=>start(); 
 </script>
