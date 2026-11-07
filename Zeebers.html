@@ -40,6 +40,20 @@ body.game-started .hud{display:grid!important}
 body.game-started .footer{display:flex!important}
 body{background:radial-gradient(ellipse at 50% 38%,#182438 0%,#0a101c 48%,#05070c 100%)}
 @media(max-width:650px){.top{top:14px;left:14px;right:14px}.brand{font-size:21px}.hud{top:76px;left:14px;width:190px;gap:7px}.fighter{padding:10px}.log{right:14px;top:76px;width:135px}.footer{left:14px;right:14px;bottom:14px;align-items:stretch;flex-direction:column}.status{min-width:0;padding:9px 12px}.status strong{font-size:18px}.controls button{flex:1;padding:11px 8px}.hint{display:none}.pill{font-size:8px;padding:7px 9px}}
+
+#howToPlay{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:#050811d9;backdrop-filter:blur(10px)}
+.tutorial-card{width:min(520px,100%);padding:26px;border:1px solid #ffffff24;border-radius:18px;background:#0d1523;text-align:center;box-shadow:0 20px 80px #000b}
+.tutorial-card h2{font:900 42px 'Barlow Condensed';margin:6px 0 8px}.tutorial-card p{font-size:12px;color:#aab5c6;line-height:1.6}
+.tutorial-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:18px 0;text-align:left}
+.tutorial-grid div{padding:11px;border:1px solid #ffffff16;border-radius:10px;background:#ffffff08;font-size:11px;color:#cbd5e1}
+.tutorial-grid b{display:block;color:#a2fa7d;font-size:12px;margin-bottom:4px}
+#touchControls{position:fixed;z-index:15;left:14px;right:14px;bottom:92px;display:none;justify-content:space-between;align-items:end;pointer-events:none}
+.pad{display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,48px);gap:5px;pointer-events:auto}
+.pad button,.action-pad button{padding:0;min-width:0;touch-action:none;background:#111c2dcc;border:1px solid #ffffff45;border-radius:12px;font-size:17px}
+.pad .up{grid-column:2}.pad .left{grid-column:1;grid-row:2}.pad .down{grid-column:2;grid-row:2}.pad .right{grid-column:3;grid-row:2}
+.action-pad{display:grid;gap:8px;pointer-events:auto}.action-pad button{padding:13px 15px;font-size:10px;font-weight:900}
+#playerTag{color:#a2fa7d}
+@media(pointer:coarse),(max-width:700px){#touchControls{display:flex}.footer{bottom:8px}.status{max-width:145px}.controls button{font-size:9px;padding:9px 7px}.hint{display:none}}
 </style>
 </head>
 <body>
@@ -48,7 +62,8 @@ body{background:radial-gradient(ellipse at 50% 38%,#182438 0%,#0a101c 48%,#05070
 <section class="hud" id="hud"></section><aside class="log" id="log"></aside>
 <div class="hint">3D ARENA · AUTO BATTLE · WATCH THE SHOWDOWN</div>
 <footer class="footer"><div class="status"><small>MATCH STATUS</small><strong id="status">READY TO FIGHT</strong></div><div class="controls"><button id="reset">↻ RESET</button><button id="pause">Ⅱ PAUSE</button><button class="primary" id="start">▶ START FIGHT</button></div></footer>
-<div class="overlay" id="overlay"><div class="winner"><small>THE ARENA CHAMPION</small><h1 id="winnerName">ZEEBERS</h1><p id="winnerText">Last one standing.</p><button class="primary" id="again">FIGHT AGAIN</button></div></div>
+<div id="howToPlay"><div class="tutorial-card"><small style="letter-spacing:3px;color:#a2fa7d">HOW TO PLAY</small><h2>YOU ARE THE FIGHTER</h2><p>Move your character yourself. The other two fighters are controlled by the arena.</p><div class="tutorial-grid"><div><b>W A S D / ARROW KEYS</b>Move around the arena</div><div><b>SPACE</b>Attack the closest rival</div><div><b>E</b>Use your special ability</div><div><b>GOAL</b>Be the last fighter standing</div></div><p>On touchscreens, use the direction pad and ATTACK / SPECIAL buttons.</p><button class="primary" id="tutorialStart">▶ ENTER ARENA</button></div></div>
+<div id="touchControls"><div class="pad"><button class="up" data-key="w">▲</button><button class="left" data-key="a">◀</button><button class="down" data-key="s">▼</button><button class="right" data-key="d">▶</button></div><div class="action-pad"><button id="touchAttack">ATTACK</button><button id="touchSpecial">SPECIAL</button></div></div>\n<div class="overlay" id="overlay"><div class="winner"><small>THE ARENA CHAMPION</small><h1 id="winnerName">ZEEBERS</h1><p id="winnerText">Last one standing.</p><button class="primary" id="again">FIGHT AGAIN</button></div></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -103,11 +118,19 @@ function chooseFighter(i){if(running)return;selectedFighter=i;document.querySele
 function reset(){running=false;ended=false;elapsed=0;logs=[];logEl.innerHTML='';overlay.classList.remove('show');status.textContent='READY TO FIGHT';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · READY';fighters.forEach((f,i)=>{f.hp=100;f.alive=true;f.cooldown=.5+i*.2;f.abilityCooldown=3+i*1.7;f.speedBoost=0;f.shieldTime=0;f.root.visible=true;f.root.position.set([[-4,0],[4,0],[0,-4.4]][i][0],0,[[-4,0],[4,0],[0,-4.4]][i][1]);f.root.rotation.set(0,0,0);f.body.material.emissiveIntensity=.12});updateHud();document.querySelector('#pause').textContent='Ⅱ PAUSE';document.querySelector('#start').textContent='▶ START FIGHT'}
 function finish(w){running=false;ended=true;status.textContent='MATCH COMPLETE';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · COMPLETE';document.querySelector('#winnerName').textContent=w.name;document.querySelector('#winnerName').style.color=w.hex;document.querySelector('#winnerText').textContent=w.name+' is the last one standing.';overlay.classList.add('show');log('<b>'+w.name+'</b> wins the match!')}
 function damage(f,amount,attacker){if(!f.alive)return;if(f.shieldTime>0)amount*=.45;f.hp=Math.max(0,f.hp-amount);f.hitFlash=.22;f.root.position.x+=Math.sign(f.root.position.x-attacker.root.position.x)*.22;f.root.position.z+=Math.sign(f.root.position.z-attacker.root.position.z)*.22;updateHud();if(f.hp<=0){f.alive=false;f.root.rotation.z=(Math.random()-.5)*.35;f.root.position.y=-.18;log('<b>'+f.name+'</b> has been eliminated');const alive=fighters.filter(x=>x.alive);if(alive.length===1)finish(alive[0])}}
-function start(){if(ended)reset();document.body.classList.add('game-started');running=true;status.textContent='FIGHT IN PROGRESS';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · LIVE';document.querySelector('#start').textContent='▶ RESTART';log('The match is underway!')}
+function start(){if(ended)reset();document.body.classList.add('game-started');document.querySelector('#howToPlay').style.display='none';running=true;status.textContent='FIGHT IN PROGRESS';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · LIVE';document.querySelector('#start').textContent='▶ RESTART';log('The match is underway!')}
 document.querySelector('#start').onclick=()=>start();document.querySelector('#reset').onclick=()=>{round++;reset()};document.querySelector('#again').onclick=()=>{round++;reset();start()};document.querySelector('#pause').onclick=()=>{if(ended)return;running=!running;status.textContent=running?'FIGHT IN PROGRESS':'MATCH PAUSED';document.querySelector('#pause').textContent=running?'Ⅱ PAUSE':'▶ RESUME'};
 const clock=new THREE.Clock();
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);elapsed+=dt;
- if(running){fighters.forEach((f)=>{if(!f.alive)return;f.cooldown-=dt;f.abilityCooldown-=dt;f.speedBoost=Math.max(0,f.speedBoost-dt);f.shieldTime=Math.max(0,f.shieldTime-dt);const others=fighters.filter(o=>o!==f&&o.alive);if(!others.length)return;
+ if(running){attackCooldown=Math.max(0,attackCooldown-dt);fighters.forEach((f)=>{if(!f.alive)return;f.cooldown-=dt;
+ if(f===player){
+  const mx=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),mz=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0),len=Math.hypot(mx,mz)||1;
+  if(mx||mz){f.root.position.x+=mx/len*dt*4.1;f.root.position.z+=mz/len*dt*4.1;f.root.rotation.y=Math.atan2(mx,mz)}
+  f.root.position.x=Math.max(-7.7,Math.min(7.7,f.root.position.x));f.root.position.z=Math.max(-7.7,Math.min(7.7,f.root.position.z));
+  f.root.position.y=Math.abs(Math.sin(elapsed*7+f.phase))*.035;f.aura.rotation.z+=dt*.8;
+  if(f.hitFlash>0){f.hitFlash-=dt;f.body.material.emissiveIntensity=.8}else f.body.material.emissiveIntensity=.12;
+  return;
+ }f.abilityCooldown-=dt;f.speedBoost=Math.max(0,f.speedBoost-dt);f.shieldTime=Math.max(0,f.shieldTime-dt);const others=fighters.filter(o=>o!==f&&o.alive);if(!others.length)return;
  if(f.abilityCooldown<=0){if(f.slug==='zeebers'){f.speedBoost=2.4;f.abilityCooldown=9;log('<b style="color:'+f.hex+'">Zeebers</b> activates QUICKSTEP!')}else if(f.slug==='calculated'){f.shieldTime=3;f.abilityCooldown=10;log('<b style="color:'+f.hex+'">Calculated</b> activates OVERDRIVE SHIELD!')}else{f.abilityCooldown=11;log('<b style="color:'+f.hex+'">icob</b> unleashes ENERGY NOVA!');others.forEach(enemy=>{if(f.root.position.distanceTo(enemy.root.position)<5)damage(enemy,12,f)})}}
  let target=others.reduce((a,b)=>f.root.position.distanceTo(a.root.position)<f.root.position.distanceTo(b.root.position)?a:b);
  const dx=target.root.position.x-f.root.position.x,dz=target.root.position.z-f.root.position.z,dist=Math.hypot(dx,dz)||1;
@@ -121,9 +144,17 @@ function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDel
  if(dist<1.9&&f.cooldown<=0){f.cooldown=.8+Math.random()*.5;f.arms.forEach(a=>a.rotation.x=-.9);damage(target,8+Math.random()*8,f);log('<b style="color:'+f.hex+'">'+f.name+'</b> lands a hit on <b>'+target.name+'</b>')}
  if(f.hitFlash>0){f.hitFlash-=dt;f.body.material.emissiveIntensity=.8}else f.body.material.emissiveIntensity=.12;
  });}
- const t=clock.elapsedTime;camera.position.x=Math.sin(t*.12)*.8;camera.position.z=17+Math.sin(t*.16)*.4;camera.lookAt(0,.8,0);renderer.render(scene,camera)}
+ const t=clock.elapsedTime;camera.position.x=player.root.position.x+Math.sin(t*.12)*.8;camera.position.z=player.root.position.z+17+Math.sin(t*.16)*.4;camera.lookAt(player.root.position.x,.8,player.root.position.z);renderer.render(scene,camera)}
 animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2))});
-updateHud();start();log('The match is underway!'); 
+updateHud();log('You are playing as '+player.name+'.');
+function attack(){if(!running||!player.alive||attackCooldown>0)return;const foes=fighters.filter(f=>f!==player&&f.alive).sort((a,b)=>player.root.position.distanceTo(a.root.position)-player.root.position.distanceTo(b.root.position));const target=foes[0];if(!target)return;const d=player.root.position.distanceTo(target.root.position);if(d>2.35){log('Move closer to attack!');return;}attackCooldown=.48;player.arms.forEach(a=>a.rotation.x=-.9);damage(target,14,player);log('<b style="color:'+player.hex+'">'+player.name+'</b> hits '+target.name+'!');}
+function special(){if(!running||!player.alive||player.abilityCooldown>0)return;if(player.slug==='zeebers'){player.speedBoost=2.4;player.abilityCooldown=9;log('QUICKSTEP activated!')}else if(player.slug==='calculated'){player.shieldTime=3;player.abilityCooldown=10;log('OVERDRIVE SHIELD activated!')}else{player.abilityCooldown=11;log('ENERGY NOVA unleashed!');fighters.filter(f=>f!==player&&f.alive&&player.root.position.distanceTo(f.root.position)<5).forEach(f=>damage(f,18,player));}}
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();keys[k]=true;if(k===' ')attack();if(k==='e')special();});
+addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
+addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));
+document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;b.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true;b.setPointerCapture(e.pointerId)});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>keys[k]=false));});
+document.querySelector('#touchAttack').addEventListener('pointerdown',e=>{e.preventDefault();attack()});document.querySelector('#touchSpecial').addEventListener('pointerdown',e=>{e.preventDefault();special()});
+document.querySelector('#tutorialStart').onclick=()=>start(); 
 </script>
 </body></html>
