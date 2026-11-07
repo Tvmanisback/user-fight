@@ -1,0 +1,99 @@
+/* USER FIGHT — touchscreen controls */
+#touchControls {
+  display: none !important;
+}
+
+@media (pointer: coarse), (max-width: 900px) {
+  body.game-started #touchControls {
+    position: fixed;
+    z-index: 40;
+    left: max(14px, env(safe-area-inset-left));
+    right: max(14px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+    display: flex !important;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    pointer-events: none;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  body.game-started #touchControls .pad {
+    display: grid;
+    grid-template-columns: repeat(3, 58px);
+    grid-template-rows: repeat(2, 58px);
+    gap: 7px;
+    pointer-events: auto;
+  }
+
+  body.game-started #touchControls .pad button,
+  body.game-started #touchControls .action-pad button {
+    min-width: 0;
+    min-height: 54px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.38);
+    border-radius: 16px;
+    background: rgba(12, 20, 34, .86);
+    color: #f7fbff;
+    box-shadow: 0 5px 18px rgba(0,0,0,.35), inset 0 1px rgba(255,255,255,.12);
+    font: 900 20px Inter, system-ui, sans-serif;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    backdrop-filter: blur(12px);
+  }
+
+  body.game-started #touchControls .pad button:active,
+  body.game-started #touchControls .action-pad button:active {
+    transform: scale(.94);
+    background: rgba(75, 103, 145, .95);
+  }
+
+  body.game-started #touchControls .pad .up { grid-column: 2; grid-row: 1; }
+  body.game-started #touchControls .pad .left { grid-column: 1; grid-row: 2; }
+  body.game-started #touchControls .pad .down { grid-column: 2; grid-row: 2; }
+  body.game-started #touchControls .pad .right { grid-column: 3; grid-row: 2; }
+
+  body.game-started #touchControls .action-pad {
+    display: grid;
+    gap: 10px;
+    width: min(116px, 29vw);
+    pointer-events: auto;
+  }
+
+  body.game-started #touchControls .action-pad button {
+    min-height: 58px;
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+
+  body.game-started #touchControls #touchAttack {
+    background: rgba(162, 250, 125, .94);
+    border-color: #a2fa7d;
+    color: #09110a;
+  }
+
+  body.game-started #touchControls #touchSpecial {
+    background: rgba(75, 141, 255, .92);
+    border-color: #80adff;
+    color: white;
+  }
+
+  /* Keep the bottom controls clear of the touch pad. */
+  body.game-started .footer { display: none !important; }
+  body.game-started .hint { display: none !important; }
+}
+
+@media (max-width: 380px) {
+  body.game-started #touchControls .pad {
+    grid-template-columns: repeat(3, 50px);
+    grid-template-rows: repeat(2, 50px);
+    gap: 5px;
+  }
+  body.game-started #touchControls .pad button { min-height: 48px; }
+  body.game-started #touchControls .action-pad { width: 96px; }
+  body.game-started #touchControls .action-pad button { min-height: 52px; }
+}
