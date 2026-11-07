@@ -32,13 +32,13 @@ button:hover{background:#273247;transform:translateY(-2px)}button.primary{backgr
 .overlay.show{opacity:1;pointer-events:auto}.winner{padding:34px 45px;text-align:center;border:1px solid rgba(255,255,255,.18);border-radius:18px;background:rgba(10,15,24,.92);box-shadow:0 20px 90px #0008;min-width:min(390px,90vw)}
 .winner small{font-size:10px;letter-spacing:4px;color:#a6b2c5}.winner h1{font:900 clamp(48px,10vw,76px)/.95 'Barlow Condensed';margin:14px 0 8px;text-transform:uppercase}.winner p{color:#aab5c6;font-size:12px;margin:0 0 22px}
 .hint{position:fixed;right:26px;bottom:95px;color:#8792a5;font-size:9px;letter-spacing:1.5px;text-align:right}
-.ready-screen{position:fixed;inset:0;z-index:5;display:grid;place-items:center;background:rgba(4,7,13,.22);backdrop-filter:blur(3px);transition:opacity .25s,visibility .25s}
+.ready-screen{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:18px;background:rgba(4,7,13,.78);backdrop-filter:blur(9px);transition:opacity .25s,visibility .25s}
 .ready-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
-.ready-card{text-align:center;padding:30px 38px;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:rgba(9,14,23,.9);box-shadow:0 20px 80px #0009}
+.ready-card{text-align:center;width:min(760px,100%);max-height:92vh;overflow:auto;padding:28px;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:rgba(9,14,23,.98);box-shadow:0 20px 80px #0009}
 .ready-card small{color:#a6b2c5;font-size:10px;letter-spacing:4px}
 .ready-card h1{font:900 clamp(38px,8vw,62px)/.95 'Barlow Condensed';margin:12px 0 8px}
 .ready-card p{font-size:12px;color:#aab5c6;margin:0 0 20px}
-.ready-card button{font-size:14px;padding:16px 30px;min-width:190px;box-shadow:0 0 28px #a2fa7d35}
+.ready-card button{font-size:14px;padding:16px 30px;min-width:210px;box-shadow:0 0 28px #a2fa7d35}\n.pick-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:22px 0}\n.pick-card{min-width:0;text-align:left;padding:14px;border:1px solid #ffffff22;border-radius:13px;background:#111a29;color:#fff;cursor:pointer;transition:.2s}\n.pick-card.selected{border:2px solid var(--pick);background:#1a2736;box-shadow:0 0 24px color-mix(in srgb,var(--pick) 25%,transparent)}\n.pick-card img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:9px;background:#080b12;margin-bottom:10px}\n.pick-card strong{display:block;font-size:14px;margin-bottom:5px}\n.pick-card span{display:block;font-size:11px;line-height:1.5;color:#aab5c6}\n.pick-card em{display:block;font-style:normal;font-size:9px;letter-spacing:1.3px;color:var(--pick);margin-top:9px}\n.fighter .ability-line{font-size:9px;letter-spacing:.5px;color:#aebbd0;margin-top:8px}\n#start{position:relative;z-index:10;box-shadow:0 0 18px #a2fa7d33}\n@media(max-width:600px){.ready-card{padding:20px 14px}.pick-grid{gap:7px}.pick-card{padding:8px}.pick-card strong{font-size:11px}.pick-card span{font-size:9px}.pick-card em{font-size:8px}}
 @media(max-width:650px){.top{top:14px;left:14px;right:14px}.brand{font-size:21px}.hud{top:76px;left:14px;width:190px;gap:7px}.fighter{padding:10px}.log{right:14px;top:76px;width:135px}.footer{left:14px;right:14px;bottom:14px;align-items:stretch;flex-direction:column}.status{min-width:0;padding:9px 12px}.status strong{font-size:18px}.controls button{flex:1;padding:11px 8px}.hint{display:none}.pill{font-size:8px;padding:7px 9px}}
 </style>
 </head>
@@ -47,7 +47,7 @@ button:hover{background:#273247;transform:translateY(-2px)}button.primary{backgr
 <header class="top"><div><div class="brand">USER <span>FIGHT</span></div><div class="sub">LAST ONE STANDING</div></div><div class="pill" id="round">ROUND 01 · READY</div></header>
 <section class="hud" id="hud"></section><aside class="log" id="log"></aside>
 <div class="hint">3D ARENA · AUTO BATTLE · WATCH THE SHOWDOWN</div>
-<div class="ready-screen" id="readyScreen"><div class="ready-card"><small>ALL FIGHTERS ARE READY</small><h1>LET THE FIGHT BEGIN</h1><p>Three enter. Only one leaves as champion.</p><button class="primary" id="bigStart">▶ START FIGHT</button></div></div>
+<div class="ready-screen" id="readyScreen"><div class="ready-card"><small>CHOOSE YOUR FIGHTER</small><h1>WHO ARE YOU PLAYING AS?</h1><p>Pick your fighter. Each character has a unique special ability that activates during the match.</p><div class="pick-grid" id="pickGrid"><button class="pick-card selected" data-pick="0" style="--pick:#48ed72"><img src="pfp/zeebers.png" alt="Zeebers"><strong>Zeebers</strong><span>QUICKSTEP — bursts forward at increased speed and strikes faster.</span><em>GREEN · SPEED</em></button><button class="pick-card" data-pick="1" style="--pick:#ff4e59"><img src="pfp/calculated.png" alt="Calculated"><strong>Calculated</strong><span>OVERDRIVE SHIELD — reduces incoming damage for a short time.</span><em>RED · DEFENSE</em></button><button class="pick-card" data-pick="2" style="--pick:#4d8dff"><img src="pfp/icob.png" alt="icob"><strong>icob</strong><span>ENERGY NOVA — sends out a pulse that hits nearby rivals.</span><em>BLUE · ENERGY</em></button></div><button class="primary" id="bigStart">▶ START FIGHT</button></div></div>
 <footer class="footer"><div class="status"><small>MATCH STATUS</small><strong id="status">READY TO FIGHT</strong></div><div class="controls"><button id="reset">↻ RESET</button><button id="pause">Ⅱ PAUSE</button><button class="primary" id="start">▶ START FIGHT</button></div></footer>
 <div class="overlay" id="overlay"><div class="winner"><small>THE ARENA CHAMPION</small><h1 id="winnerName">ZEEBERS</h1><p id="winnerText">Last one standing.</p><button class="primary" id="again">FIGHT AGAIN</button></div></div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
@@ -65,9 +65,9 @@ const ring=new THREE.Mesh(new THREE.TorusGeometry(8.65,.07,10,100),new THREE.Mes
 for(let i=0;i<24;i++){const a=i/24*Math.PI*2;const p=new THREE.Mesh(new THREE.BoxGeometry(.16,.65,.16),new THREE.MeshStandardMaterial({color:0x34425b,emissive:0x101d35,metalness:.6}));p.position.set(Math.cos(a)*8.6,.25,Math.sin(a)*8.6);p.castShadow=true;scene.add(p)}
 const grid=new THREE.GridHelper(40,40,0x253047,0x151d2b);grid.position.y=-.55;scene.add(grid);
 const fighters=[
- {name:'Zeebers',slug:'zeebers',color:0x48ed72,hex:'#48ed72',hp:100},
- {name:'Calculated',slug:'calculated',color:0xff4e59,hex:'#ff4e59',hp:100},
- {name:'icob',slug:'icob',color:0x4d8dff,hex:'#4d8dff',hp:100}
+ {name:'Zeebers',slug:'zeebers',color:0x48ed72,hex:'#48ed72',hp:100,ability:'QUICKSTEP'},
+ {name:'Calculated',slug:'calculated',color:0xff4e59,hex:'#ff4e59',hp:100,ability:'OVERDRIVE SHIELD'},
+ {name:'icob',slug:'icob',color:0x4d8dff,hex:'#4d8dff',hp:100,ability:'ENERGY NOVA'}
 ];
 // Put each fighter's square avatar image in /pfp using these exact filenames.
 const pfpLoader=new THREE.TextureLoader();
@@ -77,7 +77,7 @@ function loadPfp(f){
  return texture;
 }
 const hud=document.querySelector('#hud');
-fighters.forEach((f,i)=>{const el=document.createElement('div');el.className='fighter';el.innerHTML='<div class="fighter-head"><div class="name"><i class="dot" style="background:'+f.hex+';color:'+f.hex+'"></i>'+f.name+'</div><span class="hptext" id="hptext'+i+'">100 / 100</span></div><div class="bar"><div class="fill" id="hp'+i+'" style="background:'+f.hex+';box-shadow:0 0 12px '+f.hex+'"></div></div>';hud.appendChild(el);f.el=el;f.hpEl=el.querySelector('.fill');f.hpText=el.querySelector('.hptext')});
+fighters.forEach((f,i)=>{const el=document.createElement('div');el.className='fighter';el.innerHTML='<div class="fighter-head"><div class="name"><i class="dot" style="background:'+f.hex+';color:'+f.hex+'"></i>'+f.name+' <span class="you-tag" id="you'+i+'" style="display:none;color:'+f.hex+';font-size:9px">YOU</span></div><span class="hptext" id="hptext'+i+'">100 / 100</span></div><div class="bar"><div class="fill" id="hp'+i+'" style="background:'+f.hex+';box-shadow:0 0 12px '+f.hex+'"></div></div><div class="ability-line" id="ability'+i+'">SPECIAL: '+f.ability+'</div>';hud.appendChild(el);f.el=el;f.hpEl=el.querySelector('.fill');f.hpText=el.querySelector('.hptext');f.abilityEl=el.querySelector('.ability-line');f.youEl=el.querySelector('.you-tag')});
 function makeFighter(f,i){
  const root=new THREE.Group();scene.add(root);
  const mat=new THREE.MeshStandardMaterial({color:f.color,roughness:.38,metalness:.2,emissive:f.color,emissiveIntensity:.12});
@@ -91,26 +91,26 @@ function makeFighter(f,i){
  for(const s of [-1,1]){const leg=new THREE.Mesh(new THREE.CapsuleGeometry(.16,.48,4,8),dark);leg.position.set(s*.2,.43,0);leg.castShadow=true;root.add(leg)}
  const aura=new THREE.Mesh(new THREE.TorusGeometry(.62,.035,8,32),new THREE.MeshBasicMaterial({color:f.color,transparent:true,opacity:.85}));aura.rotation.x=Math.PI/2;aura.position.y=.08;root.add(aura);
  const glow=new THREE.PointLight(f.color,2.3,4);glow.position.y=1.2;root.add(glow);
- f.root=root;f.body=body;f.arms=arms;f.aura=aura;f.glow=glow;f.alive=true;f.hp=100;f.cooldown=Math.random();f.hitFlash=0;f.phase=Math.random()*6;
+ f.root=root;f.body=body;f.arms=arms;f.aura=aura;f.glow=glow;f.alive=true;f.hp=100;f.cooldown=Math.random();f.hitFlash=0;f.phase=Math.random()*6;f.abilityCooldown=3+i*1.7;f.speedBoost=0;f.shieldTime=0;
  const start=[[-4,0],[4,0],[0,-4.4]][i];root.position.set(start[0],0,start[1]);return f;
 }
 fighters.forEach(makeFighter);
-let running=false,ended=false,elapsed=0,last=0,round=1,logs=[];
+let running=false,ended=false,elapsed=0,last=0,round=1,logs=[],selectedFighter=0;
 const status=document.querySelector('#status'),logEl=document.querySelector('#log'),overlay=document.querySelector('#overlay');
 function log(msg){logs.unshift(msg);logs=logs.slice(0,5);logEl.innerHTML=logs.map(x=>'<div>'+x+'</div>').join('')}
-function updateHud(){fighters.forEach(f=>{f.hpEl.style.width=Math.max(0,f.hp)+'%';f.hpText.textContent=Math.ceil(f.hp)+' / 100';f.el.classList.toggle('out',!f.alive)})}
-function reset(){running=false;ended=false;document.querySelector('#readyScreen').classList.remove('hidden');elapsed=0;logs=[];logEl.innerHTML='';overlay.classList.remove('show');status.textContent='READY TO FIGHT';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · READY';fighters.forEach((f,i)=>{f.hp=100;f.alive=true;f.cooldown=.5+i*.2;f.root.visible=true;f.root.position.set([[-4,0],[4,0],[0,-4.4]][i][0],0,[[-4,0],[4,0],[0,-4.4]][i][1]);f.root.rotation.set(0,0,0);f.body.material.emissiveIntensity=.12});updateHud();document.querySelector('#pause').textContent='Ⅱ PAUSE';document.querySelector('#start').textContent='▶ START FIGHT'}
+function updateHud(){fighters.forEach((f,i)=>{f.hpEl.style.width=Math.max(0,f.hp)+'%';f.hpText.textContent=Math.ceil(f.hp)+' / 100';f.el.classList.toggle('out',!f.alive);f.youEl.style.display=i===selectedFighter?'inline':'none';f.abilityEl.textContent='SPECIAL: '+f.ability+(f.shieldTime>0?' · SHIELDED':f.speedBoost>0?' · QUICKSTEP ACTIVE':f.abilityCooldown>0?' · CHARGING':' · READY')})}\nfunction chooseFighter(i){if(running)return;selectedFighter=i;document.querySelectorAll('.pick-card').forEach(card=>card.classList.toggle('selected',Number(card.dataset.pick)===i));updateHud();}\ndocument.querySelectorAll('.pick-card').forEach(card=>card.addEventListener('click',()=>chooseFighter(Number(card.dataset.pick))));
+function reset(){running=false;ended=false;document.querySelector('#readyScreen').classList.remove('hidden');elapsed=0;logs=[];logEl.innerHTML='';overlay.classList.remove('show');status.textContent='READY TO FIGHT';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · READY';fighters.forEach((f,i)=>{f.hp=100;f.alive=true;f.cooldown=.5+i*.2;f.abilityCooldown=3+i*1.7;f.speedBoost=0;f.shieldTime=0;f.root.visible=true;f.root.position.set([[-4,0],[4,0],[0,-4.4]][i][0],0,[[-4,0],[4,0],[0,-4.4]][i][1]);f.root.rotation.set(0,0,0);f.body.material.emissiveIntensity=.12});updateHud();document.querySelector('#pause').textContent='Ⅱ PAUSE';document.querySelector('#start').textContent='▶ START FIGHT'}
 function finish(w){running=false;ended=true;status.textContent='MATCH COMPLETE';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · COMPLETE';document.querySelector('#winnerName').textContent=w.name;document.querySelector('#winnerName').style.color=w.hex;document.querySelector('#winnerText').textContent=w.name+' is the last one standing.';overlay.classList.add('show');log('<b>'+w.name+'</b> wins the match!')}
-function damage(f,amount,attacker){if(!f.alive)return;f.hp=Math.max(0,f.hp-amount);f.hitFlash=.22;f.root.position.x+=Math.sign(f.root.position.x-attacker.root.position.x)*.22;f.root.position.z+=Math.sign(f.root.position.z-attacker.root.position.z)*.22;updateHud();if(f.hp<=0){f.alive=false;f.root.rotation.z=(Math.random()-.5)*.35;f.root.position.y=-.18;log('<b>'+f.name+'</b> has been eliminated');const alive=fighters.filter(x=>x.alive);if(alive.length===1)finish(alive[0])}}
+function damage(f,amount,attacker){if(!f.alive)return;if(f.shieldTime>0)amount*=.45;f.hp=Math.max(0,f.hp-amount);f.hitFlash=.22;f.root.position.x+=Math.sign(f.root.position.x-attacker.root.position.x)*.22;f.root.position.z+=Math.sign(f.root.position.z-attacker.root.position.z)*.22;updateHud();if(f.hp<=0){f.alive=false;f.root.rotation.z=(Math.random()-.5)*.35;f.root.position.y=-.18;log('<b>'+f.name+'</b> has been eliminated');const alive=fighters.filter(x=>x.alive);if(alive.length===1)finish(alive[0])}}
 function start(){if(ended)reset();document.querySelector('#readyScreen').classList.add('hidden');running=true;status.textContent='FIGHT IN PROGRESS';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · LIVE';document.querySelector('#start').textContent='▶ RESTART';log('The match is underway!')}
 document.querySelector('#start').onclick=()=>start();document.querySelector('#bigStart').onclick=()=>start();document.querySelector('#reset').onclick=()=>{round++;reset()};document.querySelector('#again').onclick=()=>{round++;reset();start()};document.querySelector('#pause').onclick=()=>{if(ended)return;running=!running;status.textContent=running?'FIGHT IN PROGRESS':'MATCH PAUSED';document.querySelector('#pause').textContent=running?'Ⅱ PAUSE':'▶ RESUME'};
 const clock=new THREE.Clock();
 function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDelta(),.04);elapsed+=dt;
- if(running){fighters.forEach((f)=>{if(!f.alive)return;f.cooldown-=dt;const others=fighters.filter(o=>o!==f&&o.alive);if(!others.length)return;
+ if(running){fighters.forEach((f)=>{if(!f.alive)return;f.cooldown-=dt;f.abilityCooldown-=dt;f.speedBoost=Math.max(0,f.speedBoost-dt);f.shieldTime=Math.max(0,f.shieldTime-dt);const others=fighters.filter(o=>o!==f&&o.alive);if(!others.length)return;\n if(f.abilityCooldown<=0){if(f.slug==='zeebers'){f.speedBoost=2.4;f.abilityCooldown=9;log('<b style="color:'+f.hex+'">Zeebers</b> activates QUICKSTEP!')}else if(f.slug==='calculated'){f.shieldTime=3;f.abilityCooldown=10;log('<b style="color:'+f.hex+'">Calculated</b> activates OVERDRIVE SHIELD!')}else{f.abilityCooldown=11;log('<b style="color:'+f.hex+'">icob</b> unleashes ENERGY NOVA!');others.forEach(enemy=>{if(f.root.position.distanceTo(enemy.root.position)<5)damage(enemy,12,f)})}}
  let target=others.reduce((a,b)=>f.root.position.distanceTo(a.root.position)<f.root.position.distanceTo(b.root.position)?a:b);
  const dx=target.root.position.x-f.root.position.x,dz=target.root.position.z-f.root.position.z,dist=Math.hypot(dx,dz)||1;
  f.root.rotation.y=Math.atan2(dx,dz);
- if(dist>1.55){f.root.position.x+=dx/dist*dt*1.5;f.root.position.z+=dz/dist*dt*1.5}
+ if(dist>1.55){f.root.position.x+=dx/dist*dt*(f.speedBoost>0?3.1:1.5);f.root.position.z+=dz/dist*dt*(f.speedBoost>0?3.1:1.5)}
  f.root.position.x=Math.max(-7.7,Math.min(7.7,f.root.position.x));f.root.position.z=Math.max(-7.7,Math.min(7.7,f.root.position.z));
  f.root.position.y=Math.abs(Math.sin(elapsed*7+f.phase))*.055;
  f.body.rotation.x=Math.sin(elapsed*5+f.phase)*.04;
@@ -122,6 +122,6 @@ function animate(){requestAnimationFrame(animate);const dt=Math.min(clock.getDel
  const t=clock.elapsedTime;camera.position.x=Math.sin(t*.12)*.8;camera.position.z=17+Math.sin(t*.16)*.4;camera.lookAt(0,.8,0);renderer.render(scene,camera)}
 animate();
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);renderer.setPixelRatio(Math.min(devicePixelRatio,2))});
-updateHud();log('Three fighters enter the arena'); 
+updateHud();chooseFighter(0);log('Choose your fighter and start the match'); 
 </script>
 </body></html>
