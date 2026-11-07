@@ -54,7 +54,9 @@ body{background:radial-gradient(ellipse at 50% 38%,#182438 0%,#0a101c 48%,#05070
 .action-pad{display:grid;gap:8px;pointer-events:auto}.action-pad button{padding:13px 15px;font-size:10px;font-weight:900}
 #playerTag{color:#a2fa7d}
 @media(pointer:coarse),(max-width:700px){#touchControls{display:flex}.footer{bottom:8px}.status{max-width:145px}.controls button{font-size:9px;padding:9px 7px}.hint{display:none}}
-@media(pointer:coarse),(max-width:700px){#touchControls{display:none!important}body.game-started #touchControls{display:flex!important}}</style>
+@media(pointer:coarse),(max-width:700px){#touchControls{display:none!important}body.game-started #touchControls{display:flex!important}}/* The 3D arena is gameplay-only. All menus and overlays live on index.html. */
+.vignette,.top,.hud,.log,.hint,.footer,#howToPlay,#touchControls,.overlay{display:none!important}
+</style>
 </head>
 <body>
 <div id="scene" aria-hidden="true"></div><div class="vignette"></div>
@@ -156,6 +158,8 @@ function handleGameKeyUp(e){const movement={KeyW:'w',KeyA:'a',KeyS:'s',KeyD:'d',
 window.addEventListener('keydown',handleGameKeyDown,{passive:false});window.addEventListener('keyup',handleGameKeyUp);window.addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));document.addEventListener('visibilitychange',()=>{if(document.hidden)Object.keys(keys).forEach(k=>keys[k]=false);});
 document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;const down=e=>{e.preventDefault();keys[k]=true;if(b.setPointerCapture&&e.pointerId!==undefined){try{b.setPointerCapture(e.pointerId)}catch(_){}}};const up=e=>{if(e)e.preventDefault();keys[k]=false;};b.addEventListener('pointerdown',down,{passive:false});['pointerup','pointercancel','lostpointercapture','pointerleave'].forEach(ev=>b.addEventListener(ev,up));b.addEventListener('contextmenu',e=>e.preventDefault());});
 document.querySelector('#touchAttack').addEventListener('pointerdown',e=>{e.preventDefault();attack()});document.querySelector('#touchSpecial').addEventListener('pointerdown',e=>{e.preventDefault();special()});
-document.querySelector('#tutorialStart').onclick=()=>start(); 
+document.querySelector('#tutorialStart').onclick=()=>start();
+// The index page owns the only START FIGHT button; begin as soon as this fighter page opens.
+start(); 
 </script>
 </body></html>
