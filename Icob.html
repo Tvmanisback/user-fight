@@ -54,7 +54,7 @@ body{background:radial-gradient(ellipse at 50% 38%,#182438 0%,#0a101c 48%,#05070
 .action-pad{display:grid;gap:8px;pointer-events:auto}.action-pad button{padding:13px 15px;font-size:10px;font-weight:900}
 #playerTag{color:#a2fa7d}
 @media(pointer:coarse),(max-width:700px){#touchControls{display:flex}.footer{bottom:8px}.status{max-width:145px}.controls button{font-size:9px;padding:9px 7px}.hint{display:none}}
-</style>
+@media(pointer:coarse),(max-width:700px){#touchControls{display:none!important}body.game-started #touchControls{display:flex!important}}</style>
 </head>
 <body>
 <div id="scene" aria-hidden="true"></div><div class="vignette"></div>
@@ -109,13 +109,13 @@ function makeFighter(f,i){
  const start=[[-4,0],[4,0],[0,-4.4]][i];root.position.set(start[0],0,start[1]);return f;
 }
 fighters.forEach(makeFighter);
-let running=false,ended=false,elapsed=0,last=0,round=1,logs=[],selectedFighter=2;
+let running=false,ended=false,elapsed=0,last=0,round=1,logs=[],selectedFighter=2;const player=fighters[selectedFighter];const keys=Object.create(null);let attackCooldown=0;
 const status=document.querySelector('#status'),logEl=document.querySelector('#log'),overlay=document.querySelector('#overlay');
 function log(msg){logs.unshift(msg);logs=logs.slice(0,5);logEl.innerHTML=logs.map(x=>'<div>'+x+'</div>').join('')}
 function updateHud(){fighters.forEach((f,i)=>{f.hpEl.style.width=Math.max(0,f.hp)+'%';f.hpText.textContent=Math.ceil(f.hp)+' / 100';f.el.classList.toggle('out',!f.alive);f.youEl.style.display=i===selectedFighter?'inline':'none';f.abilityEl.textContent='SPECIAL: '+f.ability+(f.shieldTime>0?' · SHIELDED':f.speedBoost>0?' · QUICKSTEP ACTIVE':f.abilityCooldown>0?' · CHARGING':' · READY')})}
 function chooseFighter(i){if(running)return;selectedFighter=i;document.querySelectorAll('.pick-card').forEach(card=>card.classList.toggle('selected',Number(card.dataset.pick)===i));updateHud();}
 
-function reset(){running=false;ended=false;elapsed=0;logs=[];logEl.innerHTML='';overlay.classList.remove('show');status.textContent='READY TO FIGHT';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · READY';fighters.forEach((f,i)=>{f.hp=100;f.alive=true;f.cooldown=.5+i*.2;f.abilityCooldown=3+i*1.7;f.speedBoost=0;f.shieldTime=0;f.root.visible=true;f.root.position.set([[-4,0],[4,0],[0,-4.4]][i][0],0,[[-4,0],[4,0],[0,-4.4]][i][1]);f.root.rotation.set(0,0,0);f.body.material.emissiveIntensity=.12});updateHud();document.querySelector('#pause').textContent='Ⅱ PAUSE';document.querySelector('#start').textContent='▶ START FIGHT'}
+function reset(){running=false;ended=false;elapsed=0;attackCooldown=0;Object.keys(keys).forEach(k=>keys[k]=false);logs=[];logEl.innerHTML='';overlay.classList.remove('show');status.textContent='READY TO FIGHT';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · READY';fighters.forEach((f,i)=>{f.hp=100;f.alive=true;f.cooldown=.5+i*.2;f.abilityCooldown=3+i*1.7;f.speedBoost=0;f.shieldTime=0;f.root.visible=true;f.root.position.set([[-4,0],[4,0],[0,-4.4]][i][0],0,[[-4,0],[4,0],[0,-4.4]][i][1]);f.root.rotation.set(0,0,0);f.body.material.emissiveIntensity=.12});updateHud();document.querySelector('#pause').textContent='Ⅱ PAUSE';document.querySelector('#start').textContent='▶ START FIGHT'}
 function finish(w){running=false;ended=true;status.textContent='MATCH COMPLETE';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · COMPLETE';document.querySelector('#winnerName').textContent=w.name;document.querySelector('#winnerName').style.color=w.hex;document.querySelector('#winnerText').textContent=w.name+' is the last one standing.';overlay.classList.add('show');log('<b>'+w.name+'</b> wins the match!')}
 function damage(f,amount,attacker){if(!f.alive)return;if(f.shieldTime>0)amount*=.45;f.hp=Math.max(0,f.hp-amount);f.hitFlash=.22;f.root.position.x+=Math.sign(f.root.position.x-attacker.root.position.x)*.22;f.root.position.z+=Math.sign(f.root.position.z-attacker.root.position.z)*.22;updateHud();if(f.hp<=0){f.alive=false;f.root.rotation.z=(Math.random()-.5)*.35;f.root.position.y=-.18;log('<b>'+f.name+'</b> has been eliminated');const alive=fighters.filter(x=>x.alive);if(alive.length===1)finish(alive[0])}}
 function start(){if(ended)reset();document.body.classList.add('game-started');document.querySelector('#howToPlay').style.display='none';running=true;status.textContent='FIGHT IN PROGRESS';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · LIVE';document.querySelector('#start').textContent='▶ RESTART';log('The match is underway!')}
@@ -150,7 +150,7 @@ addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updat
 updateHud();log('You are playing as '+player.name+'.');
 function attack(){if(!running||!player.alive||attackCooldown>0)return;const foes=fighters.filter(f=>f!==player&&f.alive).sort((a,b)=>player.root.position.distanceTo(a.root.position)-player.root.position.distanceTo(b.root.position));const target=foes[0];if(!target)return;const d=player.root.position.distanceTo(target.root.position);if(d>2.35){log('Move closer to attack!');return;}attackCooldown=.48;player.arms.forEach(a=>a.rotation.x=-.9);damage(target,14,player);log('<b style="color:'+player.hex+'">'+player.name+'</b> hits '+target.name+'!');}
 function special(){if(!running||!player.alive||player.abilityCooldown>0)return;if(player.slug==='zeebers'){player.speedBoost=2.4;player.abilityCooldown=9;log('QUICKSTEP activated!')}else if(player.slug==='calculated'){player.shieldTime=3;player.abilityCooldown=10;log('OVERDRIVE SHIELD activated!')}else{player.abilityCooldown=11;log('ENERGY NOVA unleashed!');fighters.filter(f=>f!==player&&f.alive&&player.root.position.distanceTo(f.root.position)<5).forEach(f=>damage(f,18,player));}}
-addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();keys[k]=true;if(k===' ')attack();if(k==='e')special();});
+addEventListener('keydown',e=>{const k=e.key.toLowerCase();if(['arrowup','arrowdown','arrowleft','arrowright',' '].includes(k))e.preventDefault();keys[k]=true;if(k===' '&&!e.repeat)attack();if(k==='e'&&!e.repeat)special();});
 addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
 addEventListener('blur',()=>Object.keys(keys).forEach(k=>keys[k]=false));
 document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;b.addEventListener('pointerdown',e=>{e.preventDefault();keys[k]=true;b.setPointerCapture(e.pointerId)});['pointerup','pointercancel','lostpointercapture'].forEach(ev=>b.addEventListener(ev,()=>keys[k]=false));});
