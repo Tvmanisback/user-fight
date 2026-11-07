@@ -1,14 +1,59 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#080b12"><title>USER FIGHT — Choose Your Fighter</title>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080b12">
+<title>USER FIGHT — Choose Your Fighter</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800;900&family=Inter:wght@400;500;600;700;800&display=swap');
-*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 15%,#1b2940 0%,#0b111d 48%,#05070c 100%);color:#f5f7fb;font-family:Inter,system-ui,sans-serif;display:grid;place-items:center;padding:24px}
-main{width:min(900px,100%);text-align:center}.brand{font:900 24px 'Barlow Condensed';letter-spacing:3px}.brand span{color:#a2fa7d}.eyebrow{margin-top:42px;color:#a6b2c5;font-size:10px;letter-spacing:4px}h1{font:900 clamp(54px,10vw,88px)/.9 'Barlow Condensed';margin:12px 0}p{color:#aab5c6;font-size:13px;line-height:1.6;margin:0 auto 28px;max-width:500px}
-.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.card{display:block;text-decoration:none;text-align:left;padding:14px;border:1px solid #ffffff20;border-radius:16px;background:linear-gradient(145deg,#172235,#0d1421);color:white;transition:.2s}.card:hover{transform:translateY(-5px);border-color:var(--c);box-shadow:0 14px 40px #0007}.card img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:#080b12}.card strong{display:block;margin-top:13px;font-size:16px}.card span{display:block;margin-top:5px;color:#aab5c6;font-size:10px;line-height:1.5}.card em{display:block;margin-top:12px;color:var(--c);font-style:normal;font-size:9px;letter-spacing:1.5px;font-weight:800}.foot{margin-top:26px;color:#66748a;font-size:9px;letter-spacing:2px}
-@media(max-width:600px){body{padding:16px}.eyebrow{margin-top:25px}.cards{gap:8px}.card{padding:8px;border-radius:11px}.card strong{font-size:12px;margin-top:8px}.card span{font-size:9px}.card em{font-size:7px;margin-top:8px}}
-</style></head><body><main><div class="brand">USER <span>FIGHT</span></div><div class="eyebrow">LAST ONE STANDING</div><h1>CHOOSE YOUR FIGHTER</h1><p>Pick who you're playing as. Your character has a unique special ability in the arena.</p>
-<div class="cards">
-<a class="card" href="Zeebers.html" style="--c:#48ed72"><img src="pfp/zeebers.png" alt="Zeebers"><strong>Zeebers</strong><span>QUICKSTEP — burst forward at increased speed.</span><em>GREEN · SPEED</em></a>
-<a class="card" href="Calculated.html" style="--c:#ff4e59"><img src="pfp/calculated.png" alt="Calculated"><strong>Calculated</strong><span>OVERDRIVE SHIELD — reduce incoming damage.</span><em>RED · DEFENSE</em></a>
-<a class="card" href="Icob.html" style="--c:#4d8dff"><img src="pfp/icob.png" alt="icob"><strong>icob</strong><span>ENERGY NOVA — hit nearby rivals with a pulse.</span><em>BLUE · ENERGY</em></a>
-</div><div class="foot">SELECT A FIGHTER TO ENTER THE ARENA</div></main></body></html>
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 15%,#1b2940 0%,#0b111d 48%,#05070c 100%);color:#f5f7fb;font-family:Inter,system-ui,sans-serif;display:grid;place-items:center;padding:24px}
+main{width:min(900px,100%);text-align:center}
+.brand{font:900 24px 'Barlow Condensed';letter-spacing:3px}.brand span{color:#a2fa7d}
+.eyebrow{margin-top:34px;color:#a6b2c5;font-size:10px;letter-spacing:4px}
+h1{font:900 clamp(54px,10vw,88px)/.9 'Barlow Condensed';margin:12px 0}
+p{color:#aab5c6;font-size:13px;line-height:1.6;margin:0 auto 28px;max-width:500px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.card{display:block;width:100%;text-decoration:none;text-align:left;padding:14px;border:1px solid #ffffff20;border-radius:16px;background:linear-gradient(145deg,#172235,#0d1421);color:white;cursor:pointer;transition:.2s;font:inherit}
+.card:hover{transform:translateY(-5px);border-color:var(--c);box-shadow:0 14px 40px #0007}
+.card.selected{border-color:var(--c);box-shadow:0 0 0 2px var(--c),0 14px 40px #0007}
+.card img{display:block;width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;background:#080b12}
+.card strong{display:block;margin-top:13px;font-size:16px}
+.card span{display:block;margin-top:5px;color:#aab5c6;font-size:10px;line-height:1.5}
+.card em{display:block;margin-top:12px;color:var(--c);font-style:normal;font-size:9px;letter-spacing:1.5px;font-weight:800}
+#startFight{display:block;margin:24px auto 0;padding:15px 34px;border:0;border-radius:10px;background:#a2fa7d;color:#09110a;font:900 13px Inter;letter-spacing:1.5px;cursor:pointer;opacity:.45}
+#startFight:enabled{opacity:1}#startFight:enabled:hover{background:#c1ff9f;transform:translateY(-2px)}
+.foot{margin-top:26px;color:#66748a;font-size:9px;letter-spacing:2px}
+@media(max-width:600px){body{padding:16px}.eyebrow{margin-top:25px}.cards{gap:8px}.card{padding:8px;border-radius:11px}.card strong{font-size:12px;margin-top:8px}.card span{font-size:9px}.card em{font-size:7px;margin-top:8px}#startFight{margin-top:18px;width:100%}}
+</style>
+</head>
+<body>
+<main>
+ <div class="brand">USER <span>FIGHT</span></div>
+ <div class="eyebrow">LAST ONE STANDING</div>
+ <h1>CHOOSE YOUR FIGHTER</h1>
+ <p>Select your character, then press START FIGHT. The other two fighters will be controlled by the arena.</p>
+ <div class="cards">
+  <button class="card" type="button" data-page="Zeebers.html" style="--c:#48ed72"><img src="pfp/zeebers.png" alt="Zeebers"><strong>Zeebers</strong><span>QUICKSTEP — burst forward at increased speed.</span><em>GREEN · SPEED</em></button>
+  <button class="card" type="button" data-page="Calculated.html" style="--c:#ff4e59"><img src="pfp/calculated.png" alt="Calculated"><strong>Calculated</strong><span>OVERDRIVE SHIELD — reduce incoming damage.</span><em>RED · DEFENSE</em></button>
+  <button class="card" type="button" data-page="Icob.html" style="--c:#4d8dff"><img src="pfp/icob.png" alt="icob"><strong>icob</strong><span>ENERGY NOVA — hit nearby rivals with a pulse.</span><em>BLUE · ENERGY</em></button>
+ </div>
+ <button id="startFight" type="button" disabled>▶ START FIGHT</button>
+ <div class="foot">SELECT A FIGHTER TO ENTER THE ARENA</div>
+</main>
+<script>
+let selectedPage='';
+const cards=[...document.querySelectorAll('.card')];
+const startButton=document.querySelector('#startFight');
+cards.forEach(card=>card.addEventListener('click',()=>{
+ selectedPage=card.dataset.page;
+ cards.forEach(item=>item.classList.toggle('selected',item===card));
+ startButton.disabled=false;
+}));
+startButton.addEventListener('click',()=>{
+ if(selectedPage) location.href=selectedPage+'?start=1';
+});
+</script>
+</body>
+</html>
