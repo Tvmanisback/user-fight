@@ -67,6 +67,17 @@ body{background:radial-gradient(ellipse at 50% 38%,#182438 0%,#0a101c 48%,#05070
 <footer class="footer"><div class="status"><small>MATCH STATUS</small><strong id="status">READY TO FIGHT</strong></div><div class="controls"><button id="reset">↻ RESET</button><button id="pause">Ⅱ PAUSE</button><button class="primary" id="start">▶ START FIGHT</button></div></footer>
 <div id="howToPlay"><div class="tutorial-card"><small style="letter-spacing:3px;color:#a2fa7d">HOW TO PLAY</small><h2>YOU ARE THE FIGHTER</h2><p>Move your character yourself. The other two fighters are controlled by the arena.</p><div class="tutorial-grid"><div><b>W A S D / ARROW KEYS</b>Move around the arena</div><div><b>SPACE</b>Attack the closest rival</div><div><b>E</b>Use your special ability</div><div><b>GOAL</b>Be the last fighter standing</div></div><p>On touchscreens, use the direction pad and ATTACK / SPECIAL buttons.</p><button class="primary" id="tutorialStart">▶ ENTER ARENA</button></div></div>
 <div id="touchControls"><div class="pad"><button class="up" data-key="w">▲</button><button class="left" data-key="a">◀</button><button class="down" data-key="s">▼</button><button class="right" data-key="d">▶</button></div><div class="action-pad"><button id="touchAttack">ATTACK</button><button id="touchSpecial">SPECIAL</button></div></div>\n<div class="overlay" id="overlay"><div class="winner"><small>THE ARENA CHAMPION</small><h1 id="winnerName">ZEEBERS</h1><p id="winnerText">Last one standing.</p><button class="primary" id="again">FIGHT AGAIN</button></div></div>
+<div id="deathScreen" aria-live="polite">
+  <div class="death-card">
+    <div class="death-kicker">USER FIGHT · ELIMINATED</div>
+    <h1>YOU'RE OUT</h1>
+    <p>Your fighter has been eliminated. You can watch the remaining fight or jump back in with a fresh round.</p>
+    <div class="death-actions">
+      <button id="deathWatch" type="button">WATCH MATCH</button>
+      <button id="deathRetry" type="button">FIGHT AGAIN</button>
+    </div>
+  </div>
+</div>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"}}</script>
 <script type="module">
 import * as THREE from 'three';
@@ -120,7 +131,7 @@ function chooseFighter(i){if(running)return;selectedFighter=i;document.querySele
 
 function reset(){running=false;ended=false;elapsed=0;attackCooldown=0;hudTick=0;Object.keys(keys).forEach(k=>keys[k]=false);logs=[];logEl.innerHTML='';overlay.classList.remove('show');status.textContent='READY TO FIGHT';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · READY';fighters.forEach((f,i)=>{f.hp=100;f.alive=true;f.cooldown=.5+i*.2;f.abilityCooldown=3+i*1.7;f.speedBoost=0;f.shieldTime=0;f.root.visible=true;f.root.position.set([[-4,0],[4,0],[0,-4.4]][i][0],0,[[-4,0],[4,0],[0,-4.4]][i][1]);f.root.rotation.set(0,0,0);f.body.material.emissiveIntensity=.12});updateHud();document.querySelector('#pause').textContent='Ⅱ PAUSE';document.querySelector('#start').textContent='▶ START FIGHT'}
 function finish(w){running=false;ended=true;status.textContent='MATCH COMPLETE';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · COMPLETE';document.querySelector('#winnerName').textContent=w.name;document.querySelector('#winnerName').style.color=w.hex;document.querySelector('#winnerText').textContent=w.name+' is the last one standing.';overlay.classList.add('show');log('<b>'+w.name+'</b> wins the match!')}
-function damage(f,amount,attacker){if(!f.alive)return;if(f.shieldTime>0)amount*=.45;f.hp=Math.max(0,f.hp-amount);f.hitFlash=.22;f.root.position.x+=Math.sign(f.root.position.x-attacker.root.position.x)*.22;f.root.position.z+=Math.sign(f.root.position.z-attacker.root.position.z)*.22;updateHud();if(f.hp<=0){f.alive=false;f.root.rotation.z=(Math.random()-.5)*.35;f.root.position.y=-.18;log('<b>'+f.name+'</b> has been eliminated');const alive=fighters.filter(x=>x.alive);if(alive.length===1)finish(alive[0])}}
+function damage(f,amount,attacker){if(!f.alive)return;if(f.shieldTime>0)amount*=.45;f.hp=Math.max(0,f.hp-amount);f.hitFlash=.22;f.root.position.x+=Math.sign(f.root.position.x-attacker.root.position.x)*.22;f.root.position.z+=Math.sign(f.root.position.z-attacker.root.position.z)*.22;updateHud();if(f.hp<=0){f.alive=false;f.root.rotation.z=(Math.random()-.5)*.35;f.root.position.y=-.18;log('<b>'+f.name+'</b> has been eliminated');if(f.isPlayer){document.querySelector('#deathScreen').classList.add('show');Object.keys(keys).forEach(k=>keys[k]=false)}const alive=fighters.filter(x=>x.alive);if(alive.length===1)finish(alive[0])}}
 function start(){if(ended)reset();document.body.classList.add('game-started');document.querySelector('#howToPlay').style.display='none';running=true;status.textContent='FIGHT IN PROGRESS';document.querySelector('#round').textContent='ROUND '+String(round).padStart(2,'0')+' · LIVE';document.querySelector('#start').textContent='▶ RESTART';log('The match is underway!')}
 document.querySelector('#start').onclick=()=>start();document.querySelector('#reset').onclick=()=>{round++;reset()};document.querySelector('#again').onclick=()=>{round++;reset();start()};document.querySelector('#pause').onclick=()=>{if(ended)return;running=!running;status.textContent=running?'FIGHT IN PROGRESS':'MATCH PAUSED';document.querySelector('#pause').textContent=running?'Ⅱ PAUSE':'▶ RESUME'};
 const clock=new THREE.Clock();
@@ -160,6 +171,8 @@ window.addEventListener('keydown',handleGameKeyDown,{passive:false});window.addE
 document.querySelectorAll('[data-key]').forEach(b=>{const k=b.dataset.key;const down=e=>{e.preventDefault();keys[k]=true;if(b.setPointerCapture&&e.pointerId!==undefined){try{b.setPointerCapture(e.pointerId)}catch(_){}}};const up=e=>{if(e)e.preventDefault();keys[k]=false;};b.addEventListener('pointerdown',down,{passive:false});['pointerup','pointercancel','lostpointercapture','pointerleave'].forEach(ev=>b.addEventListener(ev,up));b.addEventListener('contextmenu',e=>e.preventDefault());});
 document.querySelector('#touchAttack').addEventListener('pointerdown',e=>{e.preventDefault();attack()});document.querySelector('#touchSpecial').addEventListener('pointerdown',e=>{e.preventDefault();special()});
 document.querySelector('#tutorialStart').onclick=()=>start();
+document.querySelector('#deathWatch').addEventListener('click',()=>document.querySelector('#deathScreen').classList.remove('show'));
+document.querySelector('#deathRetry').addEventListener('click',()=>{document.querySelector('#deathScreen').classList.remove('show');round++;reset();start()});
 // The index page owns the only START FIGHT button; begin as soon as this fighter page opens.
 start(); 
 </script>
