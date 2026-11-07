@@ -32,9 +32,11 @@ button:hover{background:#273247;transform:translateY(-2px)}button.primary{backgr
 .overlay.show{opacity:1;pointer-events:auto}.winner{padding:34px 45px;text-align:center;border:1px solid rgba(255,255,255,.18);border-radius:18px;background:rgba(10,15,24,.92);box-shadow:0 20px 90px #0008;min-width:min(390px,90vw)}
 .winner small{font-size:10px;letter-spacing:4px;color:#a6b2c5}.winner h1{font:900 clamp(48px,10vw,76px)/.95 'Barlow Condensed';margin:14px 0 8px;text-transform:uppercase}.winner p{color:#aab5c6;font-size:12px;margin:0 0 22px}
 .hint{position:fixed;right:26px;bottom:95px;color:#8792a5;font-size:9px;letter-spacing:1.5px;text-align:right}
-/* Keep the arena and match HUD completely off-screen until the player starts. */
-body:not(.game-started) #scene,body:not(.game-started) .vignette,body:not(.game-started) .top,body:not(.game-started) .hud,body:not(.game-started) .log,body:not(.game-started) .footer,body:not(.game-started) .hint{display:none!important}
-body:not(.game-started){background:radial-gradient(ellipse at 50% 38%,#182438 0%,#0a101c 48%,#05070c 100%)}
+/* Hard-gate the actual game UI: nothing from the arena is visible before START. */
+#scene,.vignette,.top,.hud,.log,.footer,.hint{visibility:hidden!important;opacity:0!important;pointer-events:none!important}
+body.game-started #scene,body.game-started .vignette,body.game-started .top,body.game-started .hud,body.game-started .log,body.game-started .footer,body.game-started .hint{visibility:visible!important;opacity:1!important;pointer-events:auto!important}
+#scene{display:block!important}
+body{background:radial-gradient(ellipse at 50% 38%,#182438 0%,#0a101c 48%,#05070c 100%)}
 .ready-screen{position:fixed;inset:0;z-index:20;display:grid;place-items:center;padding:18px;background:rgba(4,7,13,.78);backdrop-filter:blur(9px);transition:opacity .25s,visibility .25s}
 .ready-screen.hidden{opacity:0;visibility:hidden;pointer-events:none}
 .ready-card{text-align:center;width:min(760px,100%);max-height:92vh;overflow:auto;padding:28px;border:1px solid rgba(255,255,255,.16);border-radius:18px;background:rgba(9,14,23,.98);box-shadow:0 20px 80px #0009}
@@ -56,7 +58,7 @@ body:not(.game-started){background:radial-gradient(ellipse at 50% 38%,#182438 0%
 </style>
 </head>
 <body>
-<div id="scene"></div><div class="vignette"></div>
+<div id="scene" aria-hidden="true"></div><div class="vignette"></div>
 <header class="top"><div><div class="brand">USER <span>FIGHT</span></div><div class="sub">LAST ONE STANDING</div></div><div class="pill" id="round">ROUND 01 · READY</div></header>
 <section class="hud" id="hud"></section><aside class="log" id="log"></aside>
 <div class="hint">3D ARENA · AUTO BATTLE · WATCH THE SHOWDOWN</div>
